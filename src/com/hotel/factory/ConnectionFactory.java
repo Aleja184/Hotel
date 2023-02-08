@@ -1,6 +1,7 @@
 package com.hotel.factory;
 
 import java.sql.Connection;
+
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
@@ -12,7 +13,7 @@ public class ConnectionFactory {
 	
 	public ConnectionFactory() {
 		ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
-		pooledDataSource.setJdbcUrl("jdbc:mysql://localhost/Hotel?userTimeZone=true&serverTimeZone=UTC");
+		pooledDataSource.setJdbcUrl("jdbc:mysql://localhost/Hotel?seUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 		pooledDataSource.setUser("root");
 		pooledDataSource.setPassword("960278451856");
 		this.datasource = pooledDataSource;
