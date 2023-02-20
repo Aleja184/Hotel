@@ -14,4 +14,5 @@ public class ReservasController {
 	public boolean registro(Reservas reserva) {
 		return reservasDAO.registro(reserva);
 	}
+	
 }

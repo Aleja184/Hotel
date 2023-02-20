@@ -2,6 +2,7 @@ package com.hotel.view;
 
 import java.awt.EventQueue;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -177,9 +178,20 @@ public class ReservasView extends JFrame {
 					LocalDate dateEnd = txtFechaS.getDate().toInstant().atZone(ZoneId.systemDefault())
 						      .toLocalDate();
 					long numberOfDays = ChronoUnit.DAYS.between(dateStart, dateEnd );
+					LocalDate today = LocalDate.now();
+					long numberOfDaysToday = ChronoUnit.DAYS.between(today, dateStart);
 					long costoFinal = 45900*numberOfDays;
-					String costoString = String.valueOf(costoFinal);
-					txtValor.setText(costoString);
+					if(numberOfDaysToday<=0) {
+						JOptionPane.showMessageDialog(null, "Debes seleccionar una fecha después de hoy");
+					}else {
+						if(costoFinal<=0) {
+							JOptionPane.showMessageDialog(null, "Debes seleccionar primero la fecha de llegada y luego la fecha de salida");
+						}else {
+							String costoString = String.valueOf(costoFinal);
+							txtValor.setText(costoString);
+						}
+					}
+					
 					
 				}
 			}
@@ -323,13 +335,12 @@ public class ReservasView extends JFrame {
 				long timeInMilliSecondsFE = fechaEntrada.getTime();
 				java.sql.Date fechaEntradaSQL = new java.sql.Date(timeInMilliSecondsFE);
 				Date fechaSalida = txtFechaE.getDate();
-				long timeInMilliSecondsFS = fechaEntrada.getTime();
+				long timeInMilliSecondsFS = fechaSalida.getTime();
 				java.sql.Date fechaSalidaSQL = new java.sql.Date(timeInMilliSecondsFS);
 				if (ReservasView.txtFechaE.getDate() != null && ReservasView.txtFechaS.getDate() != null) {	
 					Reservas reserva = new Reservas(fechaEntradaSQL,fechaSalidaSQL,Double.valueOf(txtValor.getText().toString()), categoria);
 					reservaController.registro(reserva);
-					System.out.println("Se logró la reserva");
-					RegistroHuesped registro = new RegistroHuesped();
+					RegistroHuesped registro = new RegistroHuesped(reserva.getId());
 					registro.setVisible(true);
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");

@@ -22,6 +22,7 @@ public class ReservasDAO {
 					+ ",VALOR,FORMA_PAGO) VALUES(?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 			try(statement){
 				ejecutarRegistro(reserva,statement);
+				resultado = true;
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -42,7 +43,7 @@ public class ReservasDAO {
 			while(resultSet.next()) {
 				reserva.setId(resultSet.getInt(1));
 			}
-		}
-		
+		}	
 	}
+	
 }
