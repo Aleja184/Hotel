@@ -5,6 +5,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import com.hotel.controller.HuespedController;
+import com.hotel.controller.ReservasController;
+import com.hotel.model.Huesped;
+import com.hotel.model.Reservas;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -37,6 +43,8 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+	private ReservasController reservasController;
+	private HuespedController huespedController;
 
 	/**
 	 * Launch the application.
@@ -58,6 +66,10 @@ public class Busqueda extends JFrame {
 	 * Create the frame.
 	 */
 	public Busqueda() {
+		
+		this.reservasController = new ReservasController();
+		this.huespedController = new HuespedController();
+		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -102,6 +114,8 @@ public class Busqueda extends JFrame {
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
 		
+		cargarTablaReservas();
+		
 		
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -115,6 +129,8 @@ public class Busqueda extends JFrame {
 		modeloH.addColumn("Nacionalidad");
 		modeloH.addColumn("Telefono");
 		modeloH.addColumn("Numero de Reserva");
+		
+		cargarTablaHuespedes();
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
@@ -268,4 +284,28 @@ public class Busqueda extends JFrame {
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);
 }
+	    
+	    public void cargarTablaReservas() {
+	    	List<Reservas> reservas = this.reservasController.listar();
+	    	reservas.forEach(reserva -> modelo.addRow(new Object[] {
+	    			reserva.getId(),
+	    			reserva.getFechaEntrada(),
+	    			reserva.getFechaSalida(),
+	    			reserva.getValor(),
+	    			reserva.getFormaPago()
+	    	}));
+	    }
+	    
+	    public void cargarTablaHuespedes() {
+	    	List<Huesped> huespedes = this.huespedController.listar();
+	    	huespedes.forEach(huesped -> modeloH.addRow(new Object[] {
+	    			huesped.getId(),
+	    			huesped.getNombre(),
+	    			huesped.getApellido(),
+	    			huesped.getFecha_nacimiento(),
+	    			huesped.getNacionalidad(),
+	    			huesped.getNumero(),
+	    			huesped.getId_reserva()
+	    	}));
+	    }
 }

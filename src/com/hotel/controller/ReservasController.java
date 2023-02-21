@@ -1,5 +1,7 @@
 package com.hotel.controller;
 
+import java.util.List;
+
 import com.hotel.DAO.ReservasDAO;
 import com.hotel.factory.ConnectionFactory;
 import com.hotel.model.Reservas;
@@ -15,4 +17,7 @@ public class ReservasController {
 		return reservasDAO.registro(reserva);
 	}
 	
+	public List<Reservas> listar(){
+		return reservasDAO.listar();
+	}
 }

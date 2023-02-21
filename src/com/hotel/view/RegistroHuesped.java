@@ -280,8 +280,8 @@ public class RegistroHuesped extends JFrame {
 						txtApellido.setText("");
 						txtTelefono.setText("");
 					}else {
-						ReservasView reserva = new ReservasView();
-						reserva.setVisible(true);
+						Exito exito = new Exito();
+						exito.setVisible(true);
 					}
 				}else {
 					JOptionPane.showConfirmDialog(null, "No se pudo registrar");
