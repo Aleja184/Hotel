@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.hotel.controller.BusquedaController;
 import com.hotel.controller.HuespedController;
 import com.hotel.controller.ReservasController;
 import com.hotel.model.Huesped;
@@ -45,6 +46,7 @@ public class Busqueda extends JFrame {
 	int xMouse, yMouse;
 	private ReservasController reservasController;
 	private HuespedController huespedController;
+	private BusquedaController busquedaController;
 
 	/**
 	 * Launch the application.
@@ -69,6 +71,7 @@ public class Busqueda extends JFrame {
 		
 		this.reservasController = new ReservasController();
 		this.huespedController = new HuespedController();
+		this.busquedaController = new BusquedaController();
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -227,7 +230,27 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				String palabraBusqueda = txtBuscar.getText();	
+				if(palabraBusqueda.length()!=0) {
+					try {
+						Integer id = Integer.valueOf(palabraBusqueda.toString());
+						limpiarTablaHuesped();
+						cargarTablaHuespedes();
+						limpiarTablaReservas();
+						cargarTablaReservasBusqueda(id);
+					} catch (Exception e2) {
+						limpiarTablaReservas();
+						cargarTablaReservas();
+						limpiarTablaHuesped();
+						cargarTablaHuespedesBusqueda(palabraBusqueda);
+					}
+				}else{
+					limpiarTablaHuesped();
+					limpiarTablaReservas();
+					cargarTablaHuespedes();
+					cargarTablaReservas();
+				}
+				
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -306,6 +329,43 @@ public class Busqueda extends JFrame {
 	    			huesped.getNacionalidad(),
 	    			huesped.getNumero(),
 	    			huesped.getId_reserva()
+	    	}));
+	    }
+	    private void limpiarTablaHuesped() {
+	    	for (int i = 0; i < modeloH.getRowCount(); i++) {
+	    		modeloH.removeRow(i);
+	    		i-=1;
+	    		}
+	    }
+	    
+	    private void limpiarTablaReservas() {
+	    	for (int i = 0; i < modelo.getRowCount(); i++) {
+	    		modelo.removeRow(i);
+	    		i-=1;
+	    		}
+	    }
+	    
+	    public void cargarTablaHuespedesBusqueda(String apellido) {
+	    	List<Huesped> huespedes = this.busquedaController.listarHuesped(apellido);
+	    	huespedes.forEach(huesped -> modeloH.addRow(new Object[] {
+	    			huesped.getId(),
+	    			huesped.getNombre(),
+	    			huesped.getApellido(),
+	    			huesped.getFecha_nacimiento(),
+	    			huesped.getNacionalidad(),
+	    			huesped.getNumero(),
+	    			huesped.getId_reserva()
+	    	}));
+	    }
+	    
+	    public void cargarTablaReservasBusqueda(Integer id) {
+	    	List<Reservas> reservas = this.busquedaController.listarReservas(id);
+	    	reservas.forEach(reserva -> modelo.addRow(new Object[] {
+	    			reserva.getId(),
+	    			reserva.getFechaEntrada(),
+	    			reserva.getFechaSalida(),
+	    			reserva.getValor(),
+	    			reserva.getFormaPago()
 	    	}));
 	    }
 }
