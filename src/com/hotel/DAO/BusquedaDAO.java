@@ -21,25 +21,23 @@ public class BusquedaDAO {
 	public List<Huesped> listarHuesped(String apellido){
 		List<Huesped> resultado = new ArrayList<>();
 		try {
-			final PreparedStatement statement = con.prepareStatement("SELECT ID,NOMBRE,APELLIDO,FECHA_NACIMIENTO,NACIONALIDAD,TELEFONO,ID_RESERVA FROM HUESPEDES");
+			final PreparedStatement statement = con.prepareStatement("SELECT ID,NOMBRE,APELLIDO,FECHA_NACIMIENTO,NACIONALIDAD,TELEFONO,ID_RESERVA FROM HUESPEDES WHERE APELLIDO=?");
 			try(statement){
+				statement.setString(1, apellido);
 				final ResultSet resultSet = statement.executeQuery();
 				try(resultSet){
 					while(resultSet.next()) {
 						
-						String apellidoHuesped = resultSet.getString("APELLIDO");
+						Huesped huesped = new Huesped(
+								resultSet.getInt("ID"),
+								resultSet.getString("NOMBRE"),
+								resultSet.getString("APELLIDO"),
+								resultSet.getDate("FECHA_NACIMIENTO"),
+								resultSet.getString("NACIONALIDAD"),
+								resultSet.getString("TELEFONO"),
+								resultSet.getInt("ID_RESERVA"));
+						resultado.add(huesped);
 						
-						if(apellido.equalsIgnoreCase(apellidoHuesped)) {
-							Huesped huesped = new Huesped(
-									resultSet.getInt("ID"),
-									resultSet.getString("NOMBRE"),
-									resultSet.getString("APELLIDO"),
-									resultSet.getDate("FECHA_NACIMIENTO"),
-									resultSet.getString("NACIONALIDAD"),
-									resultSet.getString("TELEFONO"),
-									resultSet.getInt("ID_RESERVA"));
-							resultado.add(huesped);
-						}
 					}
 				}
 			}
@@ -52,22 +50,21 @@ public class BusquedaDAO {
 	public List<Reservas> listarReservas(Integer id){
 		List<Reservas> resultado = new ArrayList<>();
 		try {
-			final PreparedStatement statement = con.prepareStatement("SELECT ID,FECHA_ENTRADA,FECHA_SALIDA,VALOR,FORMA_PAGO FROM RESERVAS");
+			final PreparedStatement statement = con.prepareStatement("SELECT ID,FECHA_ENTRADA,FECHA_SALIDA,VALOR,FORMA_PAGO FROM RESERVAS WHERE ID=?");
 			try(statement){
+				statement.setInt(1, id);
 				final ResultSet resultSet = statement.executeQuery();
 				try(resultSet){
 					while(resultSet.next()) {
-						Integer idReserva = resultSet.getInt("ID");
 						
-						if(id.equals(idReserva)) {
-							Reservas reserva = new Reservas(
-									resultSet.getInt("ID"),
-									resultSet.getDate("FECHA_ENTRADA"),
-									resultSet.getDate("FECHA_SALIDA"),
-									resultSet.getDouble("VALOR"),
-									resultSet.getString("FORMA_PAGO"));
-							resultado.add(reserva);
-						}
+						Reservas reserva = new Reservas(
+								resultSet.getInt("ID"),
+								resultSet.getDate("FECHA_ENTRADA"),
+								resultSet.getDate("FECHA_SALIDA"),
+								resultSet.getDouble("VALOR"),
+								resultSet.getString("FORMA_PAGO"));
+						resultado.add(reserva);
+						
 					}
 				}
 			}
