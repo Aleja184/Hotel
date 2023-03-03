@@ -20,4 +20,8 @@ public class ReservasController {
 	public List<Reservas> listar(){
 		return reservasDAO.listar();
 	}
+	
+	public void eliminar(Integer id) {
+		reservasDAO.eliminar(id);
+	}
 }

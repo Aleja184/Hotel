@@ -19,9 +19,12 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Optional;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -286,6 +289,16 @@ public class Busqueda extends JFrame {
 		btnEliminar.setBounds(767, 508, 122, 35);
 		btnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEliminar);
+		btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				eliminarReserva();
+				limpiarTablaReservas();
+				cargarTablaReservas();
+				limpiarTablaHuesped();
+				cargarTablaHuespedes();
+			}
+		});
 		
 		JLabel lblEliminar = new JLabel("ELIMINAR");
 		lblEliminar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -294,6 +307,7 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
+	
 	}
 	
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
@@ -308,7 +322,7 @@ public class Busqueda extends JFrame {
 	        this.setLocation(x - xMouse, y - yMouse);
 }
 	    
-	    public void cargarTablaReservas() {
+	    private void cargarTablaReservas() {
 	    	List<Reservas> reservas = this.reservasController.listar();
 	    	reservas.forEach(reserva -> modelo.addRow(new Object[] {
 	    			reserva.getId(),
@@ -319,7 +333,7 @@ public class Busqueda extends JFrame {
 	    	}));
 	    }
 	    
-	    public void cargarTablaHuespedes() {
+	    private void cargarTablaHuespedes() {
 	    	List<Huesped> huespedes = this.huespedController.listar();
 	    	huespedes.forEach(huesped -> modeloH.addRow(new Object[] {
 	    			huesped.getId(),
@@ -345,7 +359,7 @@ public class Busqueda extends JFrame {
 	    		}
 	    }
 	    
-	    public void cargarTablaHuespedesBusqueda(String apellido) {
+	    private void cargarTablaHuespedesBusqueda(String apellido) {
 	    	List<Huesped> huespedes = this.busquedaController.listarHuesped(apellido);
 	    	huespedes.forEach(huesped -> modeloH.addRow(new Object[] {
 	    			huesped.getId(),
@@ -358,7 +372,7 @@ public class Busqueda extends JFrame {
 	    	}));
 	    }
 	    
-	    public void cargarTablaReservasBusqueda(Integer id) {
+	    private void cargarTablaReservasBusqueda(Integer id) {
 	    	List<Reservas> reservas = this.busquedaController.listarReservas(id);
 	    	reservas.forEach(reserva -> modelo.addRow(new Object[] {
 	    			reserva.getId(),
@@ -367,5 +381,24 @@ public class Busqueda extends JFrame {
 	    			reserva.getValor(),
 	    			reserva.getFormaPago()
 	    	}));
+	    }
+	    
+	    private boolean tieneFilaElegidaReservas() {
+	    	return tbReservas.getSelectedRowCount() == 0 || tbReservas.getSelectedColumnCount() ==0;
+	    }
+	    
+	    private void eliminarReserva() {
+	    	if(tieneFilaElegidaReservas()) {
+	    		JOptionPane.showMessageDialog(this, "Por favor, elije un item");
+	    	}
+	    	
+	    	Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+	    		.ifPresent(fila->{
+	    			Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+	    			this.reservasController.eliminar(id);
+	    			modelo.removeRow(tbReservas.getSelectedRow());
+	    			
+	    			JOptionPane.showMessageDialog(this, "Reserva "+id+" eliminada");
+	    		});
 	    }
 }
