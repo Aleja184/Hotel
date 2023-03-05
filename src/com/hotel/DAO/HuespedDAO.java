@@ -75,4 +75,33 @@ public class HuespedDAO {
 		}
 		return resultado;
 	}
+	
+	public void eliminar(Integer id) {
+		try {
+			final PreparedStatement statement = con.prepareStatement("DELETE FROM HUESPEDES WHERE ID=?");
+			try(statement){
+				statement.setInt(1, id);
+				statement.execute();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void modificar(Huesped huesped) {
+		try {
+			final PreparedStatement statement = con.prepareStatement("UPDATE HUESPEDES SET NOMBRE=?,APELLIDO=?,FECHA_NACIMIENTO=?,NACIONALIDAD=?,TELEFONO=? WHERE ID=?");
+			try(statement){
+				statement.setString(1, huesped.getNombre());
+				statement.setString(2, huesped.getApellido());
+				statement.setDate(3, huesped.getFecha_nacimiento());
+				statement.setString(4, huesped.getNacionalidad());
+				statement.setString(5, huesped.getNumero());
+				statement.setInt(6, huesped.getId());
+				statement.execute();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

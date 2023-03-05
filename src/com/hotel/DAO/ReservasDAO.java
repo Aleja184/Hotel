@@ -82,4 +82,20 @@ public class ReservasDAO {
 		}
 	}
 	
+	public void modificar(Reservas reserva) {
+		try {
+			final PreparedStatement statement = con.prepareStatement("UPDATE RESERVAS SET FECHA_ENTRADA=?,FECHA_SALIDA=?,VALOR=?,FORMA_PAGO=? WHERE ID=?");
+			try(statement){
+				statement.setDate(1, reserva.getFechaEntrada());
+				statement.setDate(2, reserva.getFechaSalida());
+				statement.setDouble(3, reserva.getValor());
+				statement.setString(4, reserva.getFormaPago());
+				statement.setInt(5, reserva.getId());
+				statement.execute();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

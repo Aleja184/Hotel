@@ -24,4 +24,8 @@ public class ReservasController {
 	public void eliminar(Integer id) {
 		reservasDAO.eliminar(id);
 	}
+	
+	public void modificar(Reservas reserva) {
+		reservasDAO.modificar(reserva);
+	}
 }

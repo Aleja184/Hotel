@@ -334,7 +334,7 @@ public class ReservasView extends JFrame {
 				Date fechaEntrada = txtFechaE.getDate();
 				long timeInMilliSecondsFE = fechaEntrada.getTime();
 				java.sql.Date fechaEntradaSQL = new java.sql.Date(timeInMilliSecondsFE);
-				Date fechaSalida = txtFechaE.getDate();
+				Date fechaSalida = txtFechaS.getDate();
 				long timeInMilliSecondsFS = fechaSalida.getTime();
 				java.sql.Date fechaSalidaSQL = new java.sql.Date(timeInMilliSecondsFS);
 				if (ReservasView.txtFechaE.getDate() != null && ReservasView.txtFechaS.getDate() != null) {	
