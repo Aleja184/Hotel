@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <h1 align="center">Hotel</h1>
 
 ![hotel](https://user-images.githubusercontent.com/78225423/222993633-17b5a587-734c-4993-b0eb-71a608198ff1.png)
@@ -20,6 +20,6 @@ Contraseña:7894
 - `Funcionalidad 4`: Permite editar y eliminar reservas y huéspedes. En caso de eliminar una reservación, se eliminarán los huéspedes relacionados a esta.
 
 
-## :white_check_mark: Technologies
+## :white_check_mark: Tecnologias
 - Java
 - MySQL
