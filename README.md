@@ -9,15 +9,15 @@ Esta aplicación que sirve para la administración del servicio de un Hotel, hac
 
 ## :hammer: Funcionalidades
 
-- `Funcionalidad 1` :  Para ingresar debe hacerse con estos datos: 
+Para ingresar debe hacerse con estos datos: 
 Usuario: alejandra@gmail.com
 Contraseña: 123456
 o
 Usuario: toro@gmail.com
 Contraseña:7894
-- `Funcionalidad 2`: Luego de haber ingresado puede proceder a registrar una nueva reserva y huéspedes. Al momento de crear una reservación se calculará el costo de esta, basandose en los días que se quedará hospedado.
-- `Funcionalidad 3`: Puede buscar reservas por medio del Id. Y huéspedes por sus apellidos.
-- `Funcionalidad 4`: Permite editar y eliminar reservas y huéspedes. En caso de eliminar una reservación, se eliminarán los huéspedes relacionados a esta.
+- `Funcionalidad 1`: Luego de haber ingresado puede proceder a registrar una nueva reserva y huéspedes. Al momento de crear una reservación se calculará el costo de esta, basandose en los días que se quedará hospedado.
+- `Funcionalidad 2`: Puede buscar reservas por medio del Id. Y huéspedes por sus apellidos.
+- `Funcionalidad 3`: Permite editar y eliminar reservas y huéspedes. En caso de eliminar una reservación, se eliminarán los huéspedes relacionados a esta.
 
 
 ## :white_check_mark: Tecnologias
