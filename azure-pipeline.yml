@@ -1,0 +1,70 @@
+# CI/CD pipeline
+
+resources:
+- repo: self
+
+# Select library for environment
+
+variables:
+  - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      - name: environment
+        value: develop
+  - ${{ if eq(variables['Build.SourceBranchName'], 'feature') }}:
+      - name: environment
+        value: feature
+  - ${{ if eq(variables['Build.SourceBranchName'], 'qa') }}:
+      - name: environment
+        value: qa
+  - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+      - name: environment
+        value: prod
+  - group: ${{ variables['Build.Repository.Name'] }}-${{ variables.environment }}
+  
+# Start stages
+stages:
+
+
+# Build Stage 
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+      
+
+    steps:
+    - script: 'mvn compile -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8'
+      displayName: 'Compile Java code'
+    - task: Maven@3
+      displayName: 'Maven Package'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'package'
+ 
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/target/*.?(war|jar)'
+        TargetFolder: $(Build.ArtifactStagingDirectory)
+ 
+    - publish: $(Build.ArtifactStagingDirectory)
+      artifact: drop
+
+# Build Stage 
+- stage: Upload
+  displayName: Upload stage
+  jobs:
+   - job: Upload
+     displayName: Upload
+     
+     steps:
+       - task: S3Upload@1
+         inputs:
+           awsCredentials: 'AWS-Azure'
+           regionName: 'us-east-1'
+           bucketName: 'hotel--use1-az6--x-s3'
+           sourceFolder: '$(Build.ArtifactStagingDirectory)'
+           globExpressions: '**/target/*.?(war|jar)'
