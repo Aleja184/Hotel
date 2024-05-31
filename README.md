@@ -23,3 +23,8 @@ Contraseña:7894
 ## :white_check_mark: Tecnologias
 - Java
 - MySQL
+- Azure Pipelines
+
+## DevOps
+El proyecto cuenta con un archivo azure-pipeline.yml que permite la automatización de las pruebas de compilación del código, genera un artefacto con el jar de la aplicación, lo sube a un bucket de AWS y lo copia a una instancia de AWS. Donde se podrá probar. 
+Usa variables de la librería de Azure Pipelines para mantener protegidas las credenciales para ingresar a la base de datos. 
