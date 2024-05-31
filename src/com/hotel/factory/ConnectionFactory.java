@@ -5,18 +5,36 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
+import java.io.FileNotFoundException;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import java.util.Properties;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import java.io.FileReader;
+
 
 public class ConnectionFactory {
 	private DataSource datasource;
 	
 	public ConnectionFactory() {
-		ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
-		pooledDataSource.setJdbcUrl("jdbc:mysql://localhost/Hotel?serverTimezone=America/Bogota");
-		pooledDataSource.setUser("root");
-		pooledDataSource.setPassword("960278451856");
-		this.datasource = pooledDataSource;
+		try {
+			String jsonFilePath = "variables.json";
+			JsonObject variables = new Gson().fromJson(new FileReader(jsonFilePath), JsonObject.class);
+			String jdbcUrl = variables.get("dbJdbcUrl").getAsString();
+			String user = variables.get("dbUser").getAsString();
+    		String password = variables.get("dbPassword").getAsString();
+			System.out.println(user);
+			System.out.println(password);
+			System.out.println(jdbcUrl);
+			ComboPooledDataSource pooledDataSource = new ComboPooledDataSource();
+        	pooledDataSource.setJdbcUrl(jdbcUrl);
+        	pooledDataSource.setUser(user);
+        	pooledDataSource.setPassword(password);
+        	this.datasource = pooledDataSource;
+		} catch (FileNotFoundException e) {
+		    e.printStackTrace();
+		}
 	}
 	
 	public Connection recuperaConexion(){

@@ -1,4 +1,8 @@
 # CI/CD pipeline
+trigger:
+  branches:
+    include:
+      - feature
 
 resources:
 - repo: self
@@ -32,11 +36,15 @@ stages:
     displayName: Build
     pool:
       vmImage: $(vmImageName)
-      
-
+ 
     steps:
-    - script: 'mvn compile -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8'
-      displayName: 'Compile Java code'
+    - task: replacetokens@6
+      inputs:
+        root: '$(Build.SourcesDirectory)'
+        sources: 'variables.json'
+        escape: 'json'
+       
+
     - task: Maven@3
       displayName: 'Maven Package'
       inputs:
@@ -49,22 +57,55 @@ stages:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: '**/target/*.?(war|jar)'
         TargetFolder: $(Build.ArtifactStagingDirectory)
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory variables.json'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: 'variables.json'
+        TargetFolder: $(Build.ArtifactStagingDirectory)
+
  
     - publish: $(Build.ArtifactStagingDirectory)
       artifact: drop
+        
+    
 
-# Build Stage 
-- stage: Upload
-  displayName: Upload stage
-  jobs:
-   - job: Upload
-     displayName: Upload
-     
-     steps:
-       - task: S3Upload@1
-         inputs:
-           awsCredentials: 'AWS-Azure'
-           regionName: 'us-east-1'
-           bucketName: 'hotel--use1-az6--x-s3'
-           sourceFolder: '$(Build.ArtifactStagingDirectory)'
-           globExpressions: '**/target/*.?(war|jar)'
+
+  - job: Upload
+    displayName: Upload
+    dependsOn: Build
+    condition: succeeded()
+    steps:
+     - download: current
+       artifact: drop
+     - task: S3Upload@1
+       inputs:
+         awsCredentials: 'AWS-Azure'
+         regionName: 'us-east-2'
+         bucketName: 'hotel-a'
+         sourceFolder: $(Pipeline.Workspace)/drop
+         globExpressions: '**/target/*.?(war|jar)'
+
+     - task: AWSCLI@1
+       inputs:
+         awsCredentials: 'AWS-Azure'
+         regionName: 'us-east-2'
+         awsCommand: 'ssm'
+         awsSubCommand: 'send-command'
+         awsArguments: '--document-name "AWS-RunShellScript" --parameters "{\"commands\":[\"aws s3 cp s3://hotel-a/target/Hotel-0.0.1-SNAPSHOT-jar-with-dependencies.jar /opt/hotel\"]}" --targets "Key=instanceids,Values=i-06c0ade1ba70202e6"'
+
+     - task: S3Upload@1
+       inputs:
+         awsCredentials: 'AWS-Azure'
+         regionName: 'us-east-2'
+         bucketName: 'hotel-a'
+         sourceFolder: $(Pipeline.Workspace)/drop
+         globExpressions: 'variables.json'
+
+     - task: AWSCLI@1
+       inputs:
+         awsCredentials: 'AWS-Azure'
+         regionName: 'us-east-2'
+         awsCommand: 'ssm'
+         awsSubCommand: 'send-command'
+         awsArguments: '--document-name "AWS-RunShellScript" --parameters "{\"commands\":[\"aws s3 cp s3://hotel-a/variables.json /opt/hotel\"]}" --targets "Key=instanceids,Values=i-06c0ade1ba70202e6"'     
